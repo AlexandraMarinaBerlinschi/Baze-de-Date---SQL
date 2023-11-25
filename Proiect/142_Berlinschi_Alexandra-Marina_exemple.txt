@@ -1,0 +1,130 @@
+--Cerinta 12 
+
+SELECT
+    C.Nume, P.NumeProdus, R.DataRecomandare
+FROM Clienti C
+JOIN Recomandare R ON C.ID_Client = R.ID_Client
+JOIN Produse P ON R.ID_Produs = P.ID_Produs
+WHERE P.Categorie = 'Machiaj';
+
+SELECT C.Nume, C.Prenume,
+       (SELECT
+            COUNT(*) F
+        FROM Comenzi
+        WHERE ID_Client = C.ID_Client) AS NumarComenzi
+FROM Clienti C;
+
+SELECT
+    P.Categorie,
+    COUNT(*) AS NumarProduse,
+    AVG(P.PretVanzare) AS PretMediu
+FROM Produse P
+JOIN Comenzi C ON P.ID_Comanda = C.ID_Comanda
+JOIN Clienti Cl ON C.ID_Client = Cl.ID_Client
+GROUP BY P.Categorie
+HAVING COUNT(*) > 1;
+
+SELECT NumeProdus, PretVanzare,
+       NVL(Review, 'Fără review') AS Review,
+       DECODE(StareComanda, 'In curs de procesare', 'In procesare', 'Incheiata') AS StareComandaFinala
+FROM Produse P
+JOIN Comenzi C ON P.ID_Comanda = C.ID_Comanda
+ORDER BY PretVanzare DESC;
+
+WITH ProduseCategorie AS (
+  SELECT P.Categorie, COUNT(*) AS NumarProduse
+  FROM Produse P
+  GROUP BY P.Categorie
+), DataPromovare AS (
+  SELECT ID_Produs, MAX(DataPromovare) AS UltimaDataPromovare
+  FROM Promovare
+  GROUP BY ID_Produs
+)
+SELECT P.NumeProdus,
+       SUBSTR(P.NumeProdus, 1, 5) AS Subsir1,
+       LENGTH(P.NumeProdus) AS LungimeNume,
+       TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD') AS DataCurenta,
+       EXTRACT(YEAR FROM CURRENT_DATE) AS AnCurent,
+       CASE WHEN P.PretVanzare > P.PretFabricare THEN 'Profit' ELSE 'Pierdere' END AS SituatieProfit
+FROM Produse P
+JOIN ProduseCategorie PC ON P.Categorie = PC.Categorie
+JOIN DataPromovare DP ON P.ID_Produs = DP.ID_Produs;
+
+commit;
+
+--Cerinta 13
+
+UPDATE Produse
+SET PretVanzare = (
+  SELECT AVG(PretVanzare)
+  FROM Produse
+  WHERE Categorie = 'Ingrijirea tenului'
+)
+WHERE ID_Produs = (
+  SELECT MAX(ID_Produs)
+  FROM Produse
+  WHERE Categorie = 'Ingrijirea tenului'
+);
+
+SELECT
+    *
+FROM PRODUSE;
+
+UPDATE Clienti
+SET ID_Comanda = NULL
+WHERE ID_Client IN (
+  SELECT ID_Client
+  FROM Comenzi
+  WHERE DataComanda < TO_DATE('2022-01-01','YYYY-MM-DD')
+);
+
+
+DELETE FROM Produse
+WHERE ID_Produs IN (
+  SELECT ID_Produs
+  FROM Stocuri
+  WHERE Cantitate = 0
+);
+
+
+--Cerinta 14
+
+SELECT Produse.Categorie, AVG(Produse.PretVanzare) AS PretMediu
+FROM Produse
+GROUP BY Produse.Categorie
+HAVING AVG(Produse.PretVanzare) > 15;
+
+UPDATE Clienti
+SET Nume = 'Smith', NrTelefon = '1234567890';
+
+--Cerinta 15
+
+SELECT C.ID_Comanda, C.DataComanda, P.NumeProdus, R.ID_Recomandare
+FROM Comenzi C
+LEFT JOIN Produse P ON C.ID_Comanda = P.ID_Comanda
+LEFT JOIN ParteneriExterni PE ON C.ID_Comanda = PE.ID_ComandaInsemnata
+LEFT JOIN RECOMANDARE R ON C.ID_Client = R.ID_Client;
+
+--Exemplu de cerere cu operația DIVISION:
+SELECT
+    C.Nume, C.Prenume
+FROM Clienti C
+WHERE NOT EXISTS (
+  SELECT *
+  FROM Comenzi
+  WHERE ID_Client = C.ID_Client
+  AND DataComanda > TO_DATE('2022-01-01','YYYY-MM-DD')
+);
+
+--Exemplu de cerere pentru analiza top-N:
+SELECT
+    *
+FROM (
+    SELECT
+        C.Nume, C.Prenume, COUNT(*) AS NumarComenzi
+    FROM Clienti C
+    JOIN Comenzi CO ON C.ID_Client = CO.ID_Client
+    GROUP BY C.Nume, C.Prenume
+    ORDER BY COUNT(*) DESC
+    )
+    WHERE ROWNUM <= 3;
