@@ -1,0 +1,438 @@
+CREATE TABLE Comenzi (
+  ID_Comanda INT PRIMARY KEY,
+  ID_Client INT,
+  DataComanda DATE,
+  StareComanda VARCHAR(50),
+  FOREIGN KEY (ID_Client) REFERENCES Clienti (ID_Client)
+);
+
+CREATE TABLE Clienti (
+  ID_Client INT PRIMARY KEY,
+  Nume VARCHAR(50),
+  Prenume VARCHAR(50),
+  Adresa VARCHAR(100),
+  NrTelefon VARCHAR(20),
+  Email VARCHAR(100),
+  ID_Comanda INT
+);
+
+CREATE TABLE Produse (
+  ID_Produs INT PRIMARY KEY,
+  NumeProdus VARCHAR(100),
+  Categorie VARCHAR(50),
+  PretFabricare DECIMAL(10, 2),
+  PretVanzare DECIMAL(10, 2),
+  Review VARCHAR(255),
+  ID_Comanda INT,
+  ID_Recomandare INT,
+  FOREIGN KEY (ID_Comanda) REFERENCES Comenzi (ID_Comanda)
+);
+
+CREATE TABLE Recomandare (
+  ID_Recomandare INT PRIMARY KEY,
+  ID_Client INT,
+  ID_Produs INT,
+  DataRecomandare DATE,
+  FOREIGN KEY (ID_Client) REFERENCES Clienti (ID_Client),
+  FOREIGN KEY (ID_Produs) REFERENCES Produse(ID_Produs)
+);
+
+CREATE TABLE Marketing (
+  ID_Echipa INT PRIMARY KEY,
+  ID_Strategie INT,
+  RataReusita DECIMAL(5, 2),
+  CostMediuPromovare DECIMAL(10, 2)
+);
+
+CREATE TABLE ParteneriExterni (
+  ID_Partener INT PRIMARY KEY,
+  NumePartener VARCHAR(100),
+  Adresa VARCHAR(100),
+  Contact VARCHAR(50),
+  ID_Echipa INT,
+  ID_ComandaInsemnata INT,
+  FOREIGN KEY (ID_Echipa) REFERENCES Marketing (ID_Echipa),
+  FOREIGN KEY (ID_ComandaInsemnata) REFERENCES ComenziInsemnate (ID_ComandaInsemnata)
+);
+
+CREATE TABLE ComenziInsemnate (
+  ID_ComandaInsemnata INT PRIMARY KEY,
+  ID_Comanda INT,
+  MotivInsemnare VARCHAR(255),
+  ID_Partener INT,
+  FOREIGN KEY (ID_Comanda) REFERENCES Comenzi (ID_Comanda)
+);
+
+CREATE TABLE Eveniment (
+  ID_Eveniment INT PRIMARY KEY,
+  NumeEveniment VARCHAR(100),
+  Descriere VARCHAR(255),
+  DataInceput DATE,
+  DataSfarsit DATE,
+  ProcentReducere DECIMAL(5, 2),
+  ID_Echipa INT,
+  FOREIGN KEY (ID_Echipa) REFERENCES Marketing (ID_Echipa)
+);
+
+CREATE TABLE Promovare (
+  ID_Promovare INT PRIMARY KEY,
+  ID_Produs INT,
+  DataPromovare DATE,
+  ID_Echipa INT,
+  FOREIGN KEY (ID_Echipa) REFERENCES Marketing (ID_Echipa)
+);
+
+CREATE TABLE CercetareDezvoltare (
+  ID_Reprezentant INT PRIMARY KEY,
+  ID_Director INT,
+  NumarCercetariLunar INT,
+  RataReusita DECIMAL(5, 2)
+);
+
+CREATE TABLE Voluntari (
+  ID_Voluntar INT PRIMARY KEY,
+  MedieEsecAlergii DECIMAL(5, 2),
+  MedieFeedback DECIMAL(5, 2),
+  ID_Reprezentant INT,
+  FOREIGN KEY (ID_Reprezentant) REFERENCES CercetareDezvoltare (ID_Reprezentant)
+);
+
+CREATE TABLE Laboratoare (
+  ID_Laborator INT PRIMARY KEY,
+  NumeLaborator VARCHAR(100),
+  Adresa VARCHAR(100),
+  Contact VARCHAR(50),
+  ID_Reprezentant INT,
+  FOREIGN KEY (ID_Reprezentant) REFERENCES CercetareDezvoltare (ID_Reprezentant)
+);
+
+CREATE TABLE Ingrediente (
+    ID_Ingredient INT PRIMARY KEY,
+    NumeIngredient VARCHAR(100),
+    Descriere VARCHAR(255),
+    ID_Produs INT,
+    FOREIGN KEY (ID_Produs) REFERENCES PRODUSE (ID_Produs)
+);
+
+CREATE TABLE Stocuri (
+    ID_Stoc INT PRIMARY KEY,
+    ID_Produs INT,
+    Cantitate INT,
+    DataActualizare DATE,
+    FOREIGN KEY (ID_Produs) REFERENCES Produse (ID_Produs)
+);
+
+drop sequence Comenzi_nr;
+
+CREATE SEQUENCE Comenzi_nr
+    START WITH 1
+    INCREMENT BY 1
+    MAXVALUE 5
+    NOCYCLE;
+
+INSERT INTO Comenzi (ID_Comanda, ID_Client, DataComanda, StareComanda)
+VALUES (Comenzi_nr.NEXTVAL, 1, TO_DATE('2021-05-25','YYYY-MM-DD'), 'In curs de procesare');
+
+INSERT INTO Comenzi (ID_Comanda, ID_Client, DataComanda, StareComanda)
+VALUES (Comenzi_nr.NEXTVAL, 2, TO_DATE('2021-05-25','YYYY-MM-DD'), 'In curs de procesare');
+
+INSERT INTO Comenzi (ID_Comanda, ID_Client, DataComanda, StareComanda)
+VALUES (Comenzi_nr.NEXTVAL, 3, TO_DATE('2021-05-26','YYYY-MM-DD'), 'In curs de procesare');
+
+INSERT INTO Comenzi (ID_Comanda, ID_Client, DataComanda, StareComanda)
+VALUES (Comenzi_nr.NEXTVAL, 4, TO_DATE('2021-05-27','YYYY-MM-DD'), 'In curs de procesare');
+
+SELECT
+    *
+FROM COMENZI;
+
+drop sequence Client_nr;
+
+CREATE SEQUENCE Client_nr
+    START WITH 1
+    INCREMENT BY 1
+    MAXVALUE 5
+    NOCYCLE;
+
+INSERT INTO Clienti ( ID_Client, Nume, Prenume, Adresa, NrTelefon, Email, ID_Comanda )
+VALUES (Client_nr.NEXTVAL, 'Popescu', 'Ana', 'Str. Florilor, Nr. 10', '0721122334', 'ana.popescu@gmail.com', 1);
+
+INSERT INTO Clienti ( ID_Client, Nume, Prenume, Adresa, NrTelefon, Email, ID_Comanda )
+VALUES (Client_nr.NEXTVAL, 'Ionescu', 'Maria', 'Str. Florilor, Nr. 11', '0721122335', 'ionescu.maria@gmail.com', 2);
+
+INSERT INTO Clienti ( ID_Client, Nume, Prenume, Adresa, NrTelefon, Email, ID_Comanda )
+VALUES (Client_nr.NEXTVAL, 'Popa', 'Andrei', 'Str. Florilor, Nr. 12', '0721122336', 'popa.andrei@gmail.com', 3);
+
+INSERT INTO Clienti ( ID_Client, Nume, Prenume, Adresa, NrTelefon, Email, ID_Comanda )
+VALUES (Client_nr.NEXTVAL, 'Pop', 'Andreea', 'Str. Florilor, Nr. 13', '0721122337', 'pop.andreea@gmail.com', 4);
+
+INSERT INTO Clienti ( ID_Client, Nume, Prenume, Adresa, NrTelefon, Email, ID_Comanda )
+VALUES (Client_nr.NEXTVAL, 'Popescu', 'Andrei', 'Str. Florilor, Nr. 14', '0721122338', 'popescu.andrei@yahoo.com', 5);
+
+SELECT
+*
+FROM CLIENTI;
+
+INSERT INTO Marketing (ID_Echipa, ID_STRATEGIE, RataReusita, CostMediuPromovare)
+VALUES (1, 1, 0.9, 500.00);
+
+INSERT INTO Marketing (ID_Echipa, ID_STRATEGIE, RataReusita, CostMediuPromovare)
+VALUES (2, 2, 0.8, 600.00);
+
+INSERT INTO Marketing (ID_Echipa, ID_STRATEGIE, RataReusita, CostMediuPromovare)
+VALUES (3, 3, 0.7, 700.00);
+
+INSERT INTO Marketing (ID_Echipa, ID_STRATEGIE, RataReusita, CostMediuPromovare)
+VALUES (4, 4, 0.6, 800.00);
+
+INSERT INTO Marketing (ID_Echipa, ID_STRATEGIE, RataReusita, CostMediuPromovare)
+VALUES (5, 5, 0.5, 900.00);
+
+SELECT
+*
+FROM MARKETING;
+
+INSERT INTO Voluntari (ID_Voluntar, MedieEsecAlergii, MedieFeedback, ID_Reprezentant)
+VALUES (1, 0.2, 4.5, 1);
+
+INSERT INTO Voluntari (ID_Voluntar, MedieEsecAlergii, MedieFeedback, ID_Reprezentant)
+VALUES (2,  0.5, 4.2, 2);
+
+INSERT INTO Voluntari (ID_Voluntar, MedieEsecAlergii, MedieFeedback, ID_Reprezentant)
+VALUES (3,  0.1, 4.8, 1);
+
+INSERT INTO Voluntari (ID_Voluntar, MedieEsecAlergii, MedieFeedback, ID_Reprezentant)
+VALUES (4, 0.3, 4.6, 4);
+
+INSERT INTO Voluntari (ID_Voluntar, MedieEsecAlergii, MedieFeedback, ID_Reprezentant)
+VALUES (5, 0.4, 4.3, 3);
+
+SELECT
+*
+FROM VOLUNTARI;
+
+INSERT INTO CercetareDezvoltare (ID_Reprezentant, ID_Director, NumarCercetariLunar, RataReusita)
+VALUES (1, 1, 5, 0.8);
+
+INSERT INTO CercetareDezvoltare (ID_Reprezentant, ID_Director, NumarCercetariLunar, RataReusita)
+VALUES (2, 2, 8, 0.7);
+
+INSERT INTO CercetareDezvoltare (ID_Reprezentant, ID_Director, NumarCercetariLunar, RataReusita)
+VALUES (3, 3, 12, 0.9);
+
+INSERT INTO CercetareDezvoltare (ID_Reprezentant, ID_Director, NumarCercetariLunar, RataReusita)
+VALUES (4, 4, 9, 0.75);
+
+INSERT INTO CercetareDezvoltare (ID_Reprezentant, ID_Director, NumarCercetariLunar, RataReusita)
+VALUES (5, 5, 11, 0.85);
+
+SELECT
+    *
+FROM CERCETAREDEZVOLTARE;
+
+INSERT INTO Produse (ID_Produs, NumeProdus, Categorie, PretFabricare, PretVanzare, Review, ID_Comanda, ID_Recomandare)
+VALUES (1, 'Rimel', 'Machiaj', 10.00, 20.00, 'Bun', 1, 1);
+
+INSERT INTO Produse (ID_Produs, NumeProdus, Categorie, PretFabricare, PretVanzare, Review, ID_Comanda, ID_Recomandare)
+VALUES (2, 'Ruj', 'Machiaj', 15.00, 30.00, 'Foarte bun', 2, 2);
+
+INSERT INTO Produse (ID_Produs, NumeProdus, Categorie, PretFabricare, PretVanzare, Review, ID_Comanda, ID_Recomandare)
+VALUES (3, 'Crema de fata', 'Ingrijirea pielii', 10.00, 20.00, 'Bun', 3, 3);
+
+INSERT INTO Produse (ID_Produs, NumeProdus, Categorie, PretFabricare, PretVanzare, Review, ID_Comanda, ID_Recomandare)
+VALUES (4, 'Fond de ten', 'Machiaj', 12.00, 25.00, 'Foarte bun', 4, 4);
+
+INSERT INTO Produse (ID_Produs, NumeProdus, Categorie, PretFabricare, PretVanzare, Review, ID_Comanda, ID_Recomandare)
+VALUES (5, 'Gel de curatare ', 'Ingrijirea tenului', 15.00, 30.00, 'Excelent', 5, 5);
+
+INSERT INTO Produse (ID_Produs, NumeProdus, Categorie, PretFabricare, PretVanzare, Review, ID_Comanda, ID_Recomandare)
+VALUES (6, 'SPF', 'Ingrijirea pielii', 30.00, 70.00, 'Excelent', 3, 6);
+
+INSERT INTO Produse (ID_Produs, NumeProdus, Categorie, PretFabricare, PretVanzare, Review, ID_Comanda, ID_Recomandare)
+VALUES (7, 'Pasta de dinti', 'Ingrijirea dentara', 5.00, 12.00, 'Excelent', 1, 7);
+
+select
+    *
+from PRODUSE;
+
+INSERT INTO ParteneriExterni (ID_Partener, NumePartener, Adresa, Contact, ID_Echipa, ID_ComandaInsemnata)
+VALUES (1, 'ABC Company', 'Str. Principală 123, Orașul X', 'John Doe', 1, 100);
+
+INSERT INTO ParteneriExterni (ID_Partener, NumePartener, Adresa, Contact, ID_Echipa, ID_ComandaInsemnata)
+VALUES (2, 'XYZ Corporation', 'Str. Secundară 456, Orașul Y', 'Jane Smith', 2, 101);
+
+INSERT INTO ParteneriExterni (ID_Partener, NumePartener, Adresa, Contact, ID_Echipa, ID_ComandaInsemnata)
+VALUES (3, 'DEF Industries', 'Str. Principală 789, Orașul Z', 'David Johnson', 1, 102);
+
+INSERT INTO ParteneriExterni (ID_Partener, NumePartener, Adresa, Contact, ID_Echipa, ID_ComandaInsemnata)
+VALUES (4, 'DEF Industries', 'Str. Principală 789, Orașul Z', 'David Johnson', 2, 103);
+
+INSERT INTO ParteneriExterni (ID_Partener, NumePartener, Adresa, Contact, ID_Echipa, ID_ComandaInsemnata)
+VALUES (5, 'OMS Industries', 'Str. Principală 229, Orașul Y', 'Kim Mary', 1, 104);
+
+select
+    *
+from PARTENERIEXTERNI;
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (100, 1, 'Nu a fost livrata la timp', 1);
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (101, 2, 'Colet fragil', 2);
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (102, 3, 'Colet deteriorat', 3);
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (103, 4, 'Colet deteriorat', 4);
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (104, 5, 'Nu a fost livrata la timp', 5);
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (105, 2, 'Colet deteriorat', 1);
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (106, 1, 'Colet fragil', 2);
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (107, 4, 'Colet deteriorat', 3);
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (108, 3, 'Nu a fost livrata la timp', 4);
+
+INSERT INTO COMENZIINSEMNATE (ID_ComandaInsemnata, ID_Comanda, MotivInsemnare, ID_Partener)
+VALUES (109, 5, 'Colet fragil', 5);
+
+select
+*
+from COMENZIINSEMNATE;
+
+INSERT INTO Laboratoare (ID_Laborator, NumeLaborator, Adresa, Contact, ID_Reprezentant)
+VALUES (1, 'Laboratorul 1', 'Str. Principală 123, Orașul X', 'John Doe', 1);
+
+INSERT INTO Laboratoare (ID_Laborator, NumeLaborator, Adresa, Contact, ID_Reprezentant)
+VALUES (2, 'Laboratorul 2', 'Str. Secundară 456, Orașul Y', 'Jane Smith', 2);
+
+INSERT INTO Laboratoare (ID_Laborator, NumeLaborator, Adresa, Contact, ID_Reprezentant)
+VALUES (3, 'Laboratorul 3', 'Str. Principală 789, Orașul Z', 'David Johnson', 3);
+
+INSERT INTO Laboratoare (ID_Laborator, NumeLaborator, Adresa, Contact, ID_Reprezentant)
+VALUES (4, 'Laboratorul 4', 'Str. Principală 229, Orașul Y', 'Kim Mary', 4);
+
+INSERT INTO Laboratoare (ID_Laborator, NumeLaborator, Adresa, Contact, ID_Reprezentant)
+VALUES (5, 'Laboratorul 5', 'Str. Principală 229, Orașul Y', 'Kim Mary', 5);
+
+select
+    *
+from LABORATOARE;
+
+INSERT INTO Eveniment(ID_Eveniment, NumeEveniment, Descriere, DataInceput, DataSfarsit, ProcentReducere, ID_Echipa)
+VALUES (1, 'Black Friday', 'Reduceri de 50% la toate produsele', TO_DATE('2020-11-27','YYYY-MM-DD'), TO_DATE('2020-11-29','YYYY-MM-DD'), 50, 1);
+
+INSERT INTO Eveniment(ID_Eveniment, NumeEveniment, Descriere, DataInceput, DataSfarsit, ProcentReducere, ID_Echipa)
+VALUES (2, 'Craciun', 'Reduceri de 30% la toate produsele', TO_DATE('2020-12-24','YYYY-MM-DD'), TO_DATE('2020-12-26','YYYY-MM-DD'), 30, 2);
+
+INSERT INTO Eveniment(ID_Eveniment, NumeEveniment, Descriere, DataInceput, DataSfarsit, ProcentReducere, ID_Echipa)
+VALUES (3, 'Revelion', 'Reduceri de 20% la toate produsele', TO_DATE('2020-12-31','YYYY-MM-DD'), TO_DATE('2021-01-02','YYYY-MM-DD'), 20, 3);
+
+INSERT INTO Eveniment(ID_Eveniment, NumeEveniment, Descriere, DataInceput, DataSfarsit, ProcentReducere, ID_Echipa)
+VALUES (4, 'Valentines Day', 'Reduceri de 40% la toate produsele', TO_DATE('2021-02-14','YYYY-MM-DD'), TO_DATE('2021-02-16','YYYY-MM-DD'), 40, 4);
+
+INSERT INTO Eveniment(ID_Eveniment, NumeEveniment, Descriere, DataInceput, DataSfarsit, ProcentReducere, ID_Echipa)
+VALUES (5, 'Black Friday', 'Reduceri de 50% la toate produsele', TO_DATE('2021-11-26','YYYY-MM-DD'), TO_DATE('2021-11-28','YYYY-MM-DD'), 50, 5);
+
+SELECT
+    *
+FROM EVENIMENT;
+
+INSERT INTO Promovare(ID_PROMOVARE, ID_PRODUS, DATAPROMOVARE, ID_ECHIPA)
+VALUES (1, 1, TO_DATE('2020-11-27','YYYY-MM-DD'), 1);
+
+INSERT INTO Promovare(ID_PROMOVARE, ID_PRODUS, DATAPROMOVARE, ID_ECHIPA)
+VALUES (2, 2, TO_DATE('2020-11-27','YYYY-MM-DD'), 2);
+
+INSERT INTO Promovare(ID_PROMOVARE, ID_PRODUS, DATAPROMOVARE, ID_ECHIPA)
+VALUES (3, 3, TO_DATE('2020-11-27','YYYY-MM-DD'), 3);
+
+INSERT INTO Promovare(ID_PROMOVARE, ID_PRODUS, DATAPROMOVARE, ID_ECHIPA)
+VALUES (4, 4, TO_DATE('2020-11-27','YYYY-MM-DD'), 4);
+
+INSERT INTO Promovare(ID_PROMOVARE, ID_PRODUS, DATAPROMOVARE, ID_ECHIPA)
+VALUES (5, 5, TO_DATE('2020-11-27','YYYY-MM-DD'), 5);
+
+SELECT
+    *
+FROM PROMOVARE;
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (1, 1, 1, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (2, 2, 2, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (3, 3, 3, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (4, 4, 4, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (5, 5, 5, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (6, 2, 6, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (7, 3, 7, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (8, 4, 1, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (9, 5, 2, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+INSERT INTO RECOMANDARE(ID_Recomandare, ID_Client, ID_Produs, DataRecomandare)
+VALUES (10, 1, 3, TO_DATE('2020-11-27','YYYY-MM-DD'));
+
+SELECT
+    *
+FROM RECOMANDARE;
+
+INSERT INTO Ingrediente (ID_Ingredient, NumeIngredient, Descriere, ID_Produs)
+VALUES (1, 'Ulei de argan', 'Ingredient hidratant pentru îngrijirea pielii', 1);
+
+INSERT INTO Ingrediente (ID_Ingredient, NumeIngredient, Descriere, ID_Produs)
+VALUES (2, 'Extract de aloe vera', 'Ingredient calmant pentru ten sensibil', 1);
+
+INSERT INTO Ingrediente (ID_Ingredient, NumeIngredient, Descriere, ID_Produs)
+VALUES (3, 'Acid hialuronic', 'Ingredient hidratant și anti-îmbătrânire', 2);
+
+INSERT INTO Ingrediente (ID_Ingredient, NumeIngredient, Descriere, ID_Produs)
+VALUES (4, 'Extract de ceai verde', 'Ingredient calmant pentru ten sensibil', 2);
+
+INSERT INTO Ingrediente (ID_Ingredient, NumeIngredient, Descriere, ID_Produs)
+VALUES (5, 'Extract de trandafir', 'Ingredient cu proprietăți tonifiante și revigorante', 1);
+
+SELECT
+    *
+FROM Ingrediente;
+
+INSERT INTO Stocuri (ID_Stoc, ID_Produs, Cantitate, DataActualizare)
+VALUES (1, 1, 50, TO_Date('2023-05-01','YYYY-MM-DD'));
+
+INSERT INTO Stocuri (ID_Stoc, ID_Produs, Cantitate, DataActualizare)
+VALUES (2, 2, 50, TO_Date('2023-05-04','YYYY-MM-DD'));
+
+INSERT INTO Stocuri (ID_Stoc, ID_Produs, Cantitate, DataActualizare)
+VALUES (3, 3, 50, TO_Date('2023-05-05','YYYY-MM-DD'));
+
+INSERT INTO Stocuri (ID_Stoc, ID_Produs, Cantitate, DataActualizare)
+VALUES (4, 4, 50, TO_Date('2023-05-03','YYYY-MM-DD'));
+
+INSERT INTO Stocuri (ID_Stoc, ID_Produs, Cantitate, DataActualizare)
+VALUES (5, 5, 50, TO_Date('2023-05-02','YYYY-MM-DD'));
+
+SELECT
+    *
+FROM Stocuri;
